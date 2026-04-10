@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/NEXT-STANDARD/minato-spec/blob/main/schema/agent-card.json",
+  "title": "AgentCard",
+  "description": "MINATO Agent Card — declarative metadata exchanged during the handshake. See MINATO_PROTOCOL.md §4.",
+  "type": "object",
+  "required": [
+    "minato_version",
+    "agent_id",
+    "display_name",
+    "owner_locale",
+    "capabilities",
+    "default_trust_mode",
+    "supported_intents",
+    "created_at",
+    "signature"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "minato_version": {
+      "type": "string",
+      "description": "MINATO protocol version this card conforms to.",
+      "pattern": "^[0-9]+\\.[0-9]+(\\.[0-9]+)?$",
+      "examples": ["0.1"]
+    },
+    "agent_id": {
+      "type": "string",
+      "description": "Nostr public key of the agent in npub (bech32) form.",
+      "pattern": "^npub1[023456789acdefghjklmnpqrstuvwxyz]{58}$",
+      "examples": ["npub1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"]
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Human-readable agent name set by its owner.",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "owner_locale": {
+      "type": "string",
+      "description": "Owner's primary language in BCP 47 format. Used as the target language for translated_content received by this agent.",
+      "pattern": "^[a-zA-Z]{2,3}(-[A-Za-z0-9]{2,8})*$",
+      "examples": ["ja", "en", "zh-TW", "pt-BR"]
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "Operations this agent is allowed to perform on behalf of its owner. See MINATO_PROTOCOL.md §8.",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "schedule.read",
+          "schedule.write",
+          "schedule.delete",
+          "message.reply",
+          "message.initiate",
+          "info.exchange",
+          "language.translate",
+          "location.area",
+          "location.precise"
+        ]
+      }
+    },
+    "default_trust_mode": {
+      "type": "string",
+      "description": "Default autonomy level this agent declares. Peers may override locally. See MINATO_PROTOCOL.md §7.",
+      "enum": ["plan", "suggest", "auto", "full_auto"]
+    },
+    "supported_intents": {
+      "type": "array",
+      "description": "Intent identifiers this agent can handle in incoming messages. See MINATO_PROTOCOL.md §9.",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "message.chat",
+          "schedule.negotiate",
+          "schedule.confirm",
+          "schedule.cancel",
+          "info.exchange",
+          "trust.upgrade",
+          "trust.downgrade",
+          "connection.establish",
+          "connection.terminate"
+        ]
+      }
+    },
+    "ai_engine": {
+      "type": "string",
+      "description": "Informational identifier of the AI engine powering this agent (e.g. 'claude', 'gpt', 'gemini'). Protocol semantics do not depend on this value.",
+      "examples": ["claude", "gpt", "gemini", "local"]
+    },
+    "created_at": {
+      "type": "integer",
+      "description": "Unix timestamp (seconds since epoch) of when this Agent Card was issued.",
+      "minimum": 0
+    },
+    "signature": {
+      "type": "string",
+      "description": "Ed25519 signature over the canonical serialization of all other fields, hex-encoded. Prevents impersonation and tampering.",
+      "pattern": "^[0-9a-fA-F]{128}$"
+    }
+  }
+}
