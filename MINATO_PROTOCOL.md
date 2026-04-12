@@ -1,124 +1,124 @@
 # MINATO Agent Protocol
-## 仕様書 v0.1
+## Specification v0.1
 
-> **「あなたのエージェントが、世界と繋がる港」**  
+> **"A port where your agents meet the world."**  
 > MINATO — Where Agents Meet
 
 ---
 
-## 目次
+## Table of Contents
 
 1. [Overview](#1-overview)
-2. [設計思想](#2-設計思想)
-3. [アーキテクチャ](#3-アーキテクチャ)
+2. [Design Philosophy](#2-design-philosophy)
+3. [Architecture](#3-architecture)
 4. [Agent Card](#4-agent-card)
-5. [メッセージタイプ](#5-メッセージタイプ)
-6. [ハンドシェイクシーケンス](#6-ハンドシェイクシーケンス)
-7. [Trust Mode（信頼モード）](#7-trust-mode信頼モード)
-8. [Capabilities（権限定義）](#8-capabilities権限定義)
-9. [Intent（意図定義）](#9-intent意図定義)
-10. [メッセージPayload仕様](#10-メッセージpayload仕様)
-11. [多言語対応](#11-多言語対応)
-12. [セキュリティ](#12-セキュリティ)
-13. [実装ガイドライン](#13-実装ガイドライン)
-14. [ロードマップ](#14-ロードマップ)
+5. [Message Types](#5-message-types)
+6. [Handshake Sequence](#6-handshake-sequence)
+7. [Trust Mode](#7-trust-mode)
+8. [Capabilities](#8-capabilities)
+9. [Intents](#9-intents)
+10. [Message Payload Specification](#10-message-payload-specification)
+11. [Multilingual Support](#11-multilingual-support)
+12. [Security](#12-security)
+13. [Implementation Guidelines](#13-implementation-guidelines)
+14. [Roadmap](#14-roadmap)
 
 ---
 
 ## 1. Overview
 
-MINATO Agent Protocolは、異なるデバイス上のAIエージェント同士が、プラットフォームや言語の壁を超えて通信するためのオープンプロトコルです。
+MINATO Agent Protocol is an open protocol that enables AI agents on different devices to communicate across platform and language boundaries.
 
 ```
-Transport:      BLE Mesh（近距離）+ Nostr（遠距離）
-暗号化:         Noise Protocol Framework（Bitchat継承）
-アイデンティティ: Nostr keypair（nsec / npub）
-データ形式:     JSON
-言語対応:       プロトコルレベルで多言語翻訳をサポート
-ライセンス:     MIT
+Transport:      BLE Mesh (proximity) + Nostr (long-range)
+Encryption:     Noise Protocol Framework (inherited from Bitchat)
+Identity:       Nostr keypair (nsec / npub)
+Data format:    JSON
+Multilingual:   Protocol-level translation support
+License:        MIT
 ```
 
-### 基本原則
+### Core Principles
 
-- **分散型** — 中央サーバー不要、特定企業に依存しない
-- **オープン** — Claude / GPT / Gemini など任意のAIエンジンが接続可能
-- **プライバシーファースト** — アカウント不要、鍵ペアがアイデンティティ
-- **言語非依存** — エージェントが翻訳を担うことで人間の言語の壁を消す
-- **段階的な信頼** — Trust Modeによってユーザーが自律度を制御できる
+- **Decentralized** — No central server, no vendor lock-in
+- **Open** — Any AI engine (Claude, GPT, Gemini, etc.) can connect
+- **Privacy-first** — No account required; keypairs are identity
+- **Language-agnostic** — Agents handle translation, removing human language barriers
+- **Graduated trust** — Users control autonomy levels via Trust Mode
 
 ---
 
-## 2. 設計思想
+## 2. Design Philosophy
 
-### なぜMINATOか
+### Why MINATO?
 
-「湊（みなと）」は人・物・金・情報が集まる場所です。  
-MINATOはエージェントが集まるハブ、出発点であり到着点でもあるインフラを目指します。
+"Minato" (港/湊) means "port" or "harbor" in Japanese — a place where people, goods, and information converge.  
+MINATO aims to be the hub where agents meet: both a point of departure and arrival.
 
 ```
-個人向けアプリ（今）
+Personal app (now)
         ↓
-エージェント間通信プラットフォーム（近い将来）
+Agent-to-agent communication platform (near future)
         ↓
-各社AIエージェントが接続するインフラ（理想）
+Infrastructure connecting AI agents from any provider (vision)
 ```
 
-### インターネットの歴史との対比
+### Historical Parallel
 
-| 時代   | 標準化されたもの        |
-|--------|-------------------------|
-| 1970s  | TCP/IP（通信プロトコル）|
-| 1990s  | HTTP（Webの共通言語）   |
-| 2000s  | REST API（サービス間接続）|
-| 2020s  | **MINATO（エージェント間）** |
+| Era    | What was standardized             |
+|--------|-----------------------------------|
+| 1970s  | TCP/IP (communication protocol)   |
+| 1990s  | HTTP (common language of the Web) |
+| 2000s  | REST API (service interconnection)|
+| 2020s  | **MINATO (agent-to-agent)**       |
 
 ---
 
-## 3. アーキテクチャ
+## 3. Architecture
 
 ```
 ┌─────────────────────────────────────────┐
 │           Application Layer              │
-│   SwiftUI（iOS）/ Jetpack Compose（Android）│
+│   SwiftUI (iOS) / Jetpack Compose (Android) │
 ├─────────────────────────────────────────┤
 │             Agent Layer                  │
 │   AgentCore / PermissionManager          │
 │   CalendarAdapter / AIEngine             │
 ├──────────────────┬──────────────────────┤
 │  MINATO Protocol │   Bitchat Protocol   │
-│  （Agent専用）   │   （Chat流用）       │
+│  (Agent-specific)│   (Chat, reused)     │
 ├──────────────────┴──────────────────────┤
 │      BLE Mesh        │    Nostr Relay    │
-│    （近距離・自動）  │  （遠距離・自動） │
+│   (proximity, auto)  │ (long-range, auto)│
 ├─────────────────────────────────────────┤
 │   Noise Protocol / Curve25519 / Ed25519  │
 └─────────────────────────────────────────┘
 ```
 
-### Transport選択ロジック
+### Transport Selection Logic
 
 ```
-相手が物理的に近い（BLE検出）
+Is the peer physically nearby? (BLE detected)
         ↓ YES
-    BLE Mesh使用（インターネット不要）
+    Use BLE Mesh (no internet required)
         ↓ NO
-    Nostr Relay経由（インターネット使用）
+    Route via Nostr Relay (internet required)
 ```
 
 ---
 
 ## 4. Agent Card
 
-Agent Cardはエージェントの「名刺」です。  
-ハンドシェイク時に交換され、相手エージェントの能力・信頼設定を宣言します。
+An Agent Card is an agent's "business card."  
+It is exchanged during the handshake and declares the agent's capabilities and trust settings.
 
-### スキーマ
+### Schema
 
 ```json
 {
   "minato_version": "0.1",
   "agent_id": "npub1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-  "display_name": "フェニックスのエージェント",
+  "display_name": "Phoenix's Agent",
   "owner_locale": "ja",
   "capabilities": [
     "schedule.read",
@@ -126,7 +126,7 @@ Agent Cardはエージェントの「名刺」です。
     "message.reply",
     "language.translate"
   ],
-  "default_trust_mode": "aibou",
+  "default_trust_mode": "suggest",
   "supported_intents": [
     "schedule.negotiate",
     "schedule.confirm",
@@ -139,46 +139,46 @@ Agent Cardはエージェントの「名刺」です。
 }
 ```
 
-### フィールド定義
+### Field Definitions
 
-| フィールド           | 型       | 説明                                      |
-|----------------------|----------|-------------------------------------------|
-| `minato_version`     | string   | プロトコルバージョン                      |
-| `agent_id`           | string   | Nostr公開鍵（npub形式）                   |
-| `display_name`       | string   | ユーザーが設定したエージェント名          |
-| `owner_locale`       | string   | オーナーの主要言語（BCP 47）              |
-| `capabilities`       | string[] | 許可する操作の一覧                        |
-| `default_trust_mode` | string   | デフォルトの信頼モード                    |
-| `supported_intents`  | string[] | 対応するIntentの一覧                      |
-| `ai_engine`          | string   | 使用しているAIエンジン（参考情報）        |
-| `created_at`         | int      | Unix timestamp                            |
-| `signature`          | string   | Ed25519による署名（なりすまし防止）       |
-
----
-
-## 5. メッセージタイプ
-
-Bitchatの既存メッセージタイプに以下を追加します。
-
-| コード  | 名前              | 説明                               |
-|---------|-------------------|------------------------------------|
-| `0x10`  | `AGENT_HANDSHAKE` | 初回接続・Agent Card交換           |
-| `0x11`  | `AGENT_MESSAGE`   | 通常の会話・情報共有               |
-| `0x12`  | `AGENT_REQUEST`   | アクション要求（予定追加など）     |
-| `0x13`  | `AGENT_RESPONSE`  | 要求への応答・提案                 |
-| `0x14`  | `AGENT_ACK`       | 承認（confirm）または拒否（reject）|
-| `0x15`  | `AGENT_REVOKE`    | 権限取り消し・接続切断             |
-| `0x16`  | `AGENT_PING`      | 死活確認・レイテンシ計測           |
-| `0x17`  | `AGENT_LOG`       | 事後通知（Full Auto時の活動記録）  |
+| Field                | Type     | Description                                    |
+|----------------------|----------|------------------------------------------------|
+| `minato_version`     | string   | Protocol version                               |
+| `agent_id`           | string   | Nostr public key (npub format)                 |
+| `display_name`       | string   | User-configured agent name                     |
+| `owner_locale`       | string   | Owner's primary language (BCP 47)              |
+| `capabilities`       | string[] | List of permitted operations                   |
+| `default_trust_mode` | string   | Default trust mode for new connections         |
+| `supported_intents`  | string[] | List of supported intents                      |
+| `ai_engine`          | string   | AI engine in use (informational)               |
+| `created_at`         | int      | Unix timestamp                                 |
+| `signature`          | string   | Ed25519 signature (anti-spoofing)              |
 
 ---
 
-## 6. ハンドシェイクシーケンス
+## 5. Message Types
 
-### 近距離（BLE）
+The following message types are added on top of Bitchat's existing types.
+
+| Code    | Name              | Description                              |
+|---------|-------------------|------------------------------------------|
+| `0x10`  | `AGENT_HANDSHAKE` | Initial connection and Agent Card exchange |
+| `0x11`  | `AGENT_MESSAGE`   | General conversation and information sharing |
+| `0x12`  | `AGENT_REQUEST`   | Action request (e.g., add a calendar event) |
+| `0x13`  | `AGENT_RESPONSE`  | Response or proposal to a request        |
+| `0x14`  | `AGENT_ACK`       | Confirmation (confirm) or rejection (reject) |
+| `0x15`  | `AGENT_REVOKE`    | Permission revocation or disconnection   |
+| `0x16`  | `AGENT_PING`      | Liveness check and latency measurement   |
+| `0x17`  | `AGENT_LOG`       | Post-hoc notification (activity log in Full Auto mode) |
+
+---
+
+## 6. Handshake Sequence
+
+### Proximity (BLE)
 
 ```
-デバイスA（フェニックス）          デバイスB（友人）
+Device A (Phoenix)                   Device B (Friend)
         │                                  │
         │ ── 0x10 AGENT_HANDSHAKE ────────>│
         │    { Agent Card A }              │
@@ -186,60 +186,60 @@ Bitchatの既存メッセージタイプに以下を追加します。
         │ <── 0x10 AGENT_HANDSHAKE ────────│
         │     { Agent Card B }             │
         │                                  │
-        │  双方がAgent Cardを保存          │
-        │  trust_modeをデフォルト設定      │
+        │  Both sides save Agent Cards     │
+        │  Trust mode set to default       │
         │                                  │
         │ ── 0x11 AGENT_MESSAGE ──────────>│
         │    { intent: "message.chat" }    │
-        │    「こんにちは！」              │
+        │    "Hello!"                      │
 ```
 
-### 遠距離（Nostr経由）
+### Long-Range (via Nostr)
 
 ```
-エージェントA                  Nostrリレー              エージェントB
-     │                             │                         │
-     │ ── NIP-17 暗号化DM ────────>│ ── 配送 ──────────────>│
-     │    { MINATO payload }       │                         │
-     │                             │                         │
-     │ <── NIP-17 暗号化DM ────────│ <── 配送 ───────────────│
-     │     { MINATO payload }      │                         │
+Agent A                    Nostr Relay              Agent B
+     │                             │                     │
+     │ ── NIP-17 Encrypted DM ───>│ ── Deliver ────────>│
+     │    { MINATO payload }       │                     │
+     │                             │                     │
+     │ <── NIP-17 Encrypted DM ───│ <── Deliver ────────│
+     │     { MINATO payload }      │                     │
 ```
 
 ---
 
-## 7. Trust Mode（信頼モード）
+## 7. Trust Mode
 
-ユーザーは相手ごとにTrust Modeを設定できます。  
-Claude Codeの実行モードを参考に設計しています。
+Users can set a Trust Mode for each peer.  
+The design is inspired by Claude Code's execution modes.
 
-### モード一覧
+### Mode Overview
 
-| 表示名（JP） | 技術名      | 自動実行 | 確認タイミング           |
-|--------------|-------------|----------|--------------------------|
-| 見習い       | `plan`      | ❌       | 全アクション前に確認     |
-| 相棒         | `suggest`   | ❌       | 実行直前に1回確認        |
-| 右腕         | `auto`      | ✅（一部）| 高リスク操作のみ確認    |
-| 分身         | `full_auto` | ✅       | 事後通知のみ             |
+| Display Name | Technical Name | Auto-Execute | Confirmation Timing          |
+|--------------|----------------|--------------|------------------------------|
+| Apprentice   | `plan`         | No           | Confirm before every action  |
+| Partner      | `suggest`      | No           | Confirm once before execution |
+| Lieutenant   | `auto`         | Partial      | Confirm only for high-risk actions |
+| Alter Ego    | `full_auto`    | Yes          | Post-hoc notification only   |
 
-### リスク判定基準（右腕モード用）
+### Risk Assessment Criteria (for `auto` mode)
 
 ```
-自動実行OK（低リスク）          要確認（高リスク）
-─────────────────────          ────────────────
-schedule.read                  schedule.write
-message.reply（既知の相手）    外部サービス操作
-info.exchange（公開情報）      新しい相手からのリクエスト
-                               個人情報の送信
+Auto-Execute (low risk)              Requires Confirmation (high risk)
+───────────────────────              ─────────────────────────────────
+schedule.read                        schedule.write
+message.reply (known peer)           External service operations
+info.exchange (public info)          Requests from new peers
+                                     Sending personal information
 ```
 
-### 設定スキーマ
+### Settings Schema
 
 ```json
 {
   "trust_settings": {
     "npub1bbb...": {
-      "mode": "aibou",
+      "mode": "suggest",
       "custom_permissions": {
         "schedule.write": false
       },
@@ -252,56 +252,56 @@ info.exchange（公開情報）      新しい相手からのリクエスト
 
 ---
 
-## 8. Capabilities（権限定義）
+## 8. Capabilities
 
-Agent Cardで宣言する権限の一覧です。  
-ユーザーはアプリの設定画面でON/OFFを管理できます。
+Capabilities are declared in the Agent Card and define what operations are permitted.  
+Users manage these via ON/OFF toggles in the app settings.
 
-### カレンダー系
+### Calendar
 
-| Capability        | 説明                               |
-|-------------------|------------------------------------|
-| `schedule.read`   | 空き時間の確認（詳細は非公開）     |
-| `schedule.write`  | カレンダーへの予定追加             |
-| `schedule.delete` | 予定の削除（要：高い信頼モード）   |
+| Capability        | Description                                   |
+|-------------------|-----------------------------------------------|
+| `schedule.read`   | Check availability (details not disclosed)    |
+| `schedule.write`  | Add events to calendar                        |
+| `schedule.delete` | Delete events (requires high trust mode)      |
 
-### メッセージ系
+### Messaging
 
-| Capability         | 説明                               |
-|--------------------|------------------------------------|
-| `message.reply`    | 相手エージェントへの返答           |
-| `message.initiate` | こちらからエージェントに話しかける |
+| Capability         | Description                                  |
+|--------------------|----------------------------------------------|
+| `message.reply`    | Reply to the peer agent                      |
+| `message.initiate` | Initiate conversation with the peer agent    |
 
-### 情報系
+### Information
 
-| Capability          | 説明                               |
-|---------------------|------------------------------------|
-| `info.exchange`     | 公開情報の交換（名前・言語など）   |
-| `language.translate`| メッセージの自動翻訳               |
-| `location.area`     | 大まかな地域の共有（市区町村レベル）|
-| `location.precise`  | 詳細な位置情報の共有               |
-
----
-
-## 9. Intent（意図定義）
-
-AGENT_MESSAGE / AGENT_REQUESTのpayloadに含まれる意図の一覧です。
-
-| Intent                 | 説明                               |
-|------------------------|------------------------------------|
-| `message.chat`         | 通常の会話                         |
-| `schedule.negotiate`   | 日程調整の開始                     |
-| `schedule.confirm`     | 日程の確定                         |
-| `schedule.cancel`      | 予定のキャンセル                   |
-| `info.exchange`        | 情報交換・自己紹介                 |
-| `trust.upgrade`        | Trust Modeの昇格リクエスト         |
-| `trust.downgrade`      | Trust Modeの降格                   |
-| `connection.establish` | 新規接続の確立                     |
-| `connection.terminate` | 接続の終了                         |
+| Capability          | Description                                  |
+|---------------------|----------------------------------------------|
+| `info.exchange`     | Exchange public info (name, language, etc.)   |
+| `language.translate`| Automatic message translation                |
+| `location.area`     | Share approximate location (city-level)       |
+| `location.precise`  | Share precise location                        |
 
 ---
 
-## 10. メッセージPayload仕様
+## 9. Intents
+
+Intents are included in AGENT_MESSAGE / AGENT_REQUEST payloads to convey the purpose of a message.
+
+| Intent                 | Description                              |
+|------------------------|------------------------------------------|
+| `message.chat`         | General conversation                     |
+| `schedule.negotiate`   | Initiate schedule negotiation            |
+| `schedule.confirm`     | Confirm a scheduled event                |
+| `schedule.cancel`      | Cancel a scheduled event                 |
+| `info.exchange`        | Information exchange / self-introduction |
+| `trust.upgrade`        | Request Trust Mode upgrade               |
+| `trust.downgrade`      | Downgrade Trust Mode                     |
+| `connection.establish` | Establish a new connection               |
+| `connection.terminate` | Terminate the connection                 |
+
+---
+
+## 10. Message Payload Specification
 
 ### AGENT_MESSAGE
 
@@ -346,10 +346,10 @@ AGENT_MESSAGE / AGENT_REQUESTのpayloadに含まれる意図の一覧です。
     "original_language": "ja",
     "translated_content": "Can I add a plan for Thursday at 7 PM?",
     "proposed_event": {
-      "title": "飲み会",
+      "title": "Drinks",
       "start": "2026-04-17T19:00:00+09:00",
       "end": "2026-04-17T21:00:00+09:00",
-      "location": "渋谷"
+      "location": "Shibuya"
     }
   },
   "signature": "ed25519_signature"
@@ -378,81 +378,81 @@ AGENT_MESSAGE / AGENT_REQUESTのpayloadに含まれる意図の一覧です。
 
 ---
 
-## 11. 多言語対応
+## 11. Multilingual Support
 
-MINATOはプロトコルレベルで言語の壁を解消します。
+MINATO eliminates language barriers at the protocol level.
 
-### 基本ルール
+### Basic Rules
 
-1. `content` — 送信者の母語で書かれたオリジナル
-2. `original_language` — BCP 47形式（例：`ja`, `en`, `zh-TW`）
-3. `translated_content` — 受信者の言語に翻訳済みのテキスト（任意）
+1. `content` — Original text in the sender's native language
+2. `original_language` — BCP 47 format (e.g., `ja`, `en`, `zh-TW`)
+3. `translated_content` — Text translated into the receiver's language (optional)
 
-### 翻訳フロー
+### Translation Flow
 
 ```
-送信エージェント
+Sending agent
   ↓
-AIエンジン（Claude等）で翻訳を生成
+AI engine (e.g., Claude) generates translation
   ↓
-payload に original + translated を両方含めて送信
+Payload includes both original and translated content
   ↓
-受信エージェント
+Receiving agent
   ↓
-受信者の言語（owner_locale）のtranslated_contentを表示
+Displays translated_content matching receiver's language (owner_locale)
 ```
 
-### 設計の意義
+### Design Rationale
 
-> エージェントが間に入ることで、言語はただのデータ形式になる。  
-> 人間は母語で話すだけでいい。
+> With an agent as intermediary, language becomes just another data format.  
+> Humans only need to speak their native tongue.
 
 ---
 
-## 12. セキュリティ
+## 12. Security
 
-### 暗号化（Bitchat継承）
+### Encryption (inherited from Bitchat)
 
-| 用途           | 方式                              |
-|----------------|-----------------------------------|
-| セッション確立 | Noise Protocol Framework（XX）    |
-| 鍵交換         | Curve25519                        |
-| メッセージ署名 | Ed25519                           |
-| BLE暗号化      | ChaCha20-Poly1305                 |
-| Nostr DM       | NIP-17（Sealed Gossip）           |
-| 鍵保管         | iOS Keychain / Android Keystore   |
+| Purpose             | Method                              |
+|---------------------|-------------------------------------|
+| Session establishment | Noise Protocol Framework (XX)     |
+| Key exchange        | Curve25519                          |
+| Message signing     | Ed25519                             |
+| BLE encryption      | ChaCha20-Poly1305                   |
+| Nostr DM            | NIP-17 (Sealed Gossip)              |
+| Key storage         | iOS Keychain / Android Keystore     |
 
-### なりすまし防止
+### Anti-Spoofing
 
-- 全メッセージにEd25519署名を付与
-- Agent CardにもEd25519署名を付与
-- `nonce`によるリプレイアタック防止
-- `request_id`による重複処理防止
+- Ed25519 signature on every message
+- Ed25519 signature on Agent Cards
+- `nonce` for replay attack prevention
+- `request_id` for deduplication
 
-### プライバシー設計
+### Privacy Design
 
 ```
-相手エージェントに渡す情報の粒度（ユーザーが設定）
+Granularity of information shared with peer agents (user-configurable):
 
-カレンダー: 「空き / 埋まり」のみ  ←  デフォルト
-            予定のタイトルまで
-            詳細情報まで
+Calendar: "available / busy" only        ← default
+          Event titles
+          Full details
 
-位置情報:   共有しない             ←  デフォルト
-            市区町村レベル
-            詳細位置
+Location: Not shared                     ← default
+          City-level
+          Precise location
 ```
 
 ---
 
-## 13. 実装ガイドライン
+## 13. Implementation Guidelines
 
-### iOS実装（Phase 1）
+### iOS Implementation (Phase 1)
 
 ```
 minato-ios/
-  ├── Bitchat/          ← forkしてそのまま流用
-  └── MINATO/           ← 新規追加
+  ├── Bitchat/          ← Forked and reused as-is
+  └── MINATO/           ← Newly added
       ├── AgentCore.swift
       ├── AgentCard.swift
       ├── PermissionManager.swift
@@ -465,12 +465,12 @@ minato-ios/
           └── MINATOMessageType.swift
 ```
 
-### Android実装（Phase 2）
+### Android Implementation (Phase 2)
 
 ```
 minato-android/
-  ├── bitchat-android/  ← forkしてそのまま流用
-  └── minato/           ← 新規追加
+  ├── bitchat-android/  ← Forked and reused as-is
+  └── minato/           ← Newly added
       ├── AgentCore.kt
       ├── AgentCard.kt
       ├── PermissionManager.kt
@@ -483,91 +483,92 @@ minato-android/
           └── MINATOMessageType.kt
 ```
 
-### Bitchatからの流用範囲
+### What to Reuse from Bitchat
 
 ```
-流用（変更しない）
-  ✅ BLE通信全般（Core Bluetooth / Android BLE）
-  ✅ Nostrプロトコル
-  ✅ Noise Protocol暗号化
+Reused (do not modify)
+  ✅ All BLE communication (Core Bluetooth / Android BLE)
+  ✅ Nostr protocol
+  ✅ Noise Protocol encryption
   ✅ Store & Forward
-  ✅ メッセージフラグメント処理
-  ✅ 鍵ペア管理（Keychain / Keystore）
+  ✅ Message fragmentation
+  ✅ Keypair management (Keychain / Keystore)
 
-新規追加
-  🆕 0x10〜0x17 MINATOメッセージタイプ
-  🆕 AgentCore（AIエンジン連携）
-  🆕 Agent Card生成・交換
-  🆕 Trust Mode管理
-  🆕 Capabilities / Intent処理
-  🆕 CalendarAdapter（EventKit / Android Calendar）
-  🆕 多言語翻訳レイヤー
-  🆕 承認UI（見習い〜分身）
+Newly added
+  🆕 0x10–0x17 MINATO message types
+  🆕 AgentCore (AI engine integration)
+  🆕 Agent Card generation and exchange
+  🆕 Trust Mode management
+  🆕 Capabilities / Intent processing
+  🆕 CalendarAdapter (EventKit / Android Calendar)
+  🆕 Multilingual translation layer
+  🆕 Approval UI (Apprentice through Alter Ego)
 ```
 
 ---
 
-## 14. ロードマップ
+## 14. Roadmap
 
-### Phase 0 — 準備（1週間）
-- [ ] Bitchat iOS forkしてビルドを通す
-- [ ] Bitchat Android forkしてビルドを通す
-- [ ] コードベースの理解・整理
+### Phase 0 — Preparation (1 week)
+- [x] Fork Bitchat iOS and get it building
+- [ ] Fork Bitchat Android and get it building
+- [ ] Understand and organize the codebase
 
-### Phase 1 — BLEエージェント通信（2〜3週間）
-- [ ] MINATOメッセージタイプの実装（0x10〜0x15）
-- [ ] Agent Card生成・交換
-- [ ] ハンドシェイクシーケンス
-- [ ] 固定応答のダミーエージェント（APIなし）
-- [ ] 「近くにいる人のエージェントと繋がる」体験確認
+### Phase 1 — BLE Agent Communication (2–3 weeks)
+- [ ] Implement MINATO message types (0x10–0x15)
+- [ ] Agent Card generation and exchange
+- [ ] Handshake sequence
+- [ ] Dummy agent with fixed responses (no API)
+- [ ] Verify the "connect with nearby agents" experience
 
-### Phase 2 — Nostrフォールバック（2週間）
-- [ ] Nostr経由のMINATOメッセージ送受信
-- [ ] BLE / Nostr自動切替
-- [ ] Trust Mode UIの実装
+### Phase 2 — Nostr Fallback (2 weeks)
+- [ ] Send/receive MINATO messages via Nostr
+- [ ] BLE / Nostr automatic switching
+- [ ] Trust Mode UI implementation
 
-### Phase 3 — AI連携（2週間）
-- [ ] Claude API接続（AgentCore）
-- [ ] CalendarAdapter（空き時間の読み取り）
-- [ ] スケジュール交渉フロー（negotiate → confirm）
+### Phase 3 — AI Integration (2 weeks)
+- [ ] Claude API connection (AgentCore)
+- [ ] CalendarAdapter (read availability)
+- [ ] Schedule negotiation flow (negotiate → confirm)
 
-### Phase 4 — 多言語・仕上げ（2週間）
-- [ ] 多言語翻訳レイヤー
-- [ ] Agent Card QRコード
-- [ ] 事後ログ（Full Auto時）
-- [ ] Android版の追いかけ実装
-
----
-
-## Appendix A — 用語集
-
-| 用語              | 説明                                                      |
-|-------------------|-----------------------------------------------------------|
-| Agent Card        | エージェントの名刺。能力・信頼設定を宣言するJSON          |
-| Trust Mode        | エージェントの自律度設定（見習い / 相棒 / 右腕 / 分身）   |
-| Capability        | エージェントに許可する操作の単位                          |
-| Intent            | メッセージが表す意図（schedule.negotiateなど）            |
-| BLE Mesh          | Bluetooth Low Energyによる近距離P2P通信                   |
-| Nostr             | 分散型メッセージプロトコル。鍵ペアがアイデンティティ      |
-| npub / nsec       | Nostrの公開鍵 / 秘密鍵                                    |
-| Handshake         | 初回接続時のAgent Card交換シーケンス                      |
-| Store & Forward   | オフライン時にメッセージをキャッシュして後で届ける仕組み  |
+### Phase 4 — Multilingual & Polish (2 weeks)
+- [ ] Multilingual translation layer
+- [ ] Agent Card QR code
+- [ ] Activity log (for Full Auto mode)
+- [ ] Android implementation catch-up
 
 ---
 
-## Appendix B — 参考プロトコル・プロジェクト
+## Appendix A — Glossary
 
-| プロジェクト              | 参照箇所                        |
-|---------------------------|---------------------------------|
-| Bitchat (jackjackbits)    | BLE Mesh, Nostr, 暗号化全般     |
-| bitchat-android           | Android実装のベース             |
-| Noise Protocol Framework  | セッション確立                  |
-| Nostr Protocol (NIPs)     | NIP-04, NIP-17（暗号化DM）      |
-| Google A2A Protocol       | Agent Card設計の参考            |
-| Claude Code               | Trust Mode設計の参考            |
+| Term              | Description                                                        |
+|-------------------|--------------------------------------------------------------------|
+| Agent Card        | An agent's business card. A JSON document declaring capabilities and trust settings |
+| Trust Mode        | Autonomy level setting (Apprentice / Partner / Lieutenant / Alter Ego) |
+| Capability        | A unit of operation permitted for an agent                         |
+| Intent            | The purpose conveyed by a message (e.g., schedule.negotiate)       |
+| BLE Mesh          | Proximity P2P communication via Bluetooth Low Energy               |
+| Nostr             | Decentralized messaging protocol where keypairs are identity       |
+| npub / nsec       | Nostr public key / secret key                                      |
+| Handshake         | The Agent Card exchange sequence during initial connection         |
+| Store & Forward   | Mechanism to cache messages while offline and deliver them later   |
+
+---
+
+## Appendix B — Reference Protocols & Projects
+
+| Project                   | Referenced For                       |
+|---------------------------|--------------------------------------|
+| Bitchat (jackjackbits)    | BLE Mesh, Nostr, encryption layer    |
+| bitchat-android           | Base for Android implementation      |
+| Noise Protocol Framework  | Session establishment                |
+| Nostr Protocol (NIPs)     | NIP-04, NIP-17 (encrypted DM)       |
+| Google A2A Protocol       | Agent Card design reference          |
+| Claude Code               | Trust Mode design reference          |
 
 ---
 
 *MINATO Agent Protocol v0.1*  
-*ステータス: Draft*  
-*最終更新: 2026-04-11*
+*Status: Draft*  
+*Last updated: 2026-04-12*  
+*Japanese version: [docs/ja/MINATO_PROTOCOL.md](docs/ja/MINATO_PROTOCOL.md)*
