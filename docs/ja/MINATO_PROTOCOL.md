@@ -526,7 +526,7 @@ minato-android/
 ### Phase 2 — Nostrフォールバック（2週間）
 - [x] Nostr経由のMINATOメッセージ送受信
 - [x] BLE / Nostr自動切替
-- [ ] Trust Mode UIの実装
+- [x] Trust Mode UIの実装
 
 ### Phase 3 — AI連携（2週間）
 - [ ] Claude API接続（AgentCore）

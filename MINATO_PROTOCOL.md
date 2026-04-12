@@ -526,7 +526,7 @@ Newly added
 ### Phase 2 — Nostr Fallback (2 weeks)
 - [x] Send/receive MINATO messages via Nostr
 - [x] BLE / Nostr automatic switching
-- [ ] Trust Mode UI implementation
+- [x] Trust Mode UI implementation
 
 ### Phase 3 — AI Integration (2 weeks)
 - [ ] Claude API connection (AgentCore)
