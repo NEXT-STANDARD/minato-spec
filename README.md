@@ -98,14 +98,14 @@ Users can set an autonomy level for each peer's agent.
 
 | Code | Name | Description |
 |------|------|-------------|
-| `0x10` | `AGENT_HANDSHAKE` | Initial connection and Agent Card exchange |
-| `0x11` | `AGENT_MESSAGE` | General conversation and information sharing |
-| `0x12` | `AGENT_REQUEST` | Action request (e.g., add calendar event) |
-| `0x13` | `AGENT_RESPONSE` | Response or proposal to a request |
-| `0x14` | `AGENT_ACK` | Confirmation or rejection |
-| `0x15` | `AGENT_REVOKE` | Permission revocation or disconnection |
-| `0x16` | `AGENT_PING` | Liveness check |
-| `0x17` | `AGENT_LOG` | Post-hoc notification (Full Auto mode) |
+| `0x30` | `AGENT_HANDSHAKE` | Initial connection and Agent Card exchange |
+| `0x31` | `AGENT_MESSAGE` | General conversation and information sharing |
+| `0x32` | `AGENT_REQUEST` | Action request (e.g., add calendar event) |
+| `0x33` | `AGENT_RESPONSE` | Response or proposal to a request |
+| `0x34` | `AGENT_ACK` | Confirmation or rejection |
+| `0x35` | `AGENT_REVOKE` | Permission revocation or disconnection |
+| `0x36` | `AGENT_PING` | Liveness check |
+| `0x37` | `AGENT_LOG` | Post-hoc notification (Full Auto mode) |
 
 ---
 

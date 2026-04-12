@@ -162,14 +162,14 @@ Bitchatの既存メッセージタイプに以下を追加します。
 
 | コード  | 名前              | 説明                               |
 |---------|-------------------|------------------------------------|
-| `0x10`  | `AGENT_HANDSHAKE` | 初回接続・Agent Card交換           |
-| `0x11`  | `AGENT_MESSAGE`   | 通常の会話・情報共有               |
-| `0x12`  | `AGENT_REQUEST`   | アクション要求（予定追加など）     |
-| `0x13`  | `AGENT_RESPONSE`  | 要求への応答・提案                 |
-| `0x14`  | `AGENT_ACK`       | 承認（confirm）または拒否（reject）|
-| `0x15`  | `AGENT_REVOKE`    | 権限取り消し・接続切断             |
-| `0x16`  | `AGENT_PING`      | 死活確認・レイテンシ計測           |
-| `0x17`  | `AGENT_LOG`       | 事後通知（Full Auto時の活動記録）  |
+| `0x30`  | `AGENT_HANDSHAKE` | 初回接続・Agent Card交換           |
+| `0x31`  | `AGENT_MESSAGE`   | 通常の会話・情報共有               |
+| `0x32`  | `AGENT_REQUEST`   | アクション要求（予定追加など）     |
+| `0x33`  | `AGENT_RESPONSE`  | 要求への応答・提案                 |
+| `0x34`  | `AGENT_ACK`       | 承認（confirm）または拒否（reject）|
+| `0x35`  | `AGENT_REVOKE`    | 権限取り消し・接続切断             |
+| `0x36`  | `AGENT_PING`      | 死活確認・レイテンシ計測           |
+| `0x37`  | `AGENT_LOG`       | 事後通知（Full Auto時の活動記録）  |
 
 ---
 
@@ -180,16 +180,16 @@ Bitchatの既存メッセージタイプに以下を追加します。
 ```
 デバイスA（フェニックス）          デバイスB（友人）
         │                                  │
-        │ ── 0x10 AGENT_HANDSHAKE ────────>│
+        │ ── 0x30 AGENT_HANDSHAKE ────────>│
         │    { Agent Card A }              │
         │                                  │
-        │ <── 0x10 AGENT_HANDSHAKE ────────│
+        │ <── 0x30 AGENT_HANDSHAKE ────────│
         │     { Agent Card B }             │
         │                                  │
         │  双方がAgent Cardを保存          │
         │  trust_modeをデフォルト設定      │
         │                                  │
-        │ ── 0x11 AGENT_MESSAGE ──────────>│
+        │ ── 0x31 AGENT_MESSAGE ──────────>│
         │    { intent: "message.chat" }    │
         │    「こんにちは！」              │
 ```
@@ -495,7 +495,7 @@ minato-android/
   ✅ 鍵ペア管理（Keychain / Keystore）
 
 新規追加
-  🆕 0x10〜0x17 MINATOメッセージタイプ
+  🆕 0x30〜0x37 MINATOメッセージタイプ
   🆕 AgentCore（AIエンジン連携）
   🆕 Agent Card生成・交換
   🆕 Trust Mode管理
@@ -515,7 +515,7 @@ minato-android/
 - [ ] コードベースの理解・整理
 
 ### Phase 1 — BLEエージェント通信（2〜3週間）
-- [ ] MINATOメッセージタイプの実装（0x10〜0x15）
+- [ ] MINATOメッセージタイプの実装（0x30〜0x35）
 - [ ] Agent Card生成・交換
 - [ ] ハンドシェイクシーケンス
 - [ ] 固定応答のダミーエージェント（APIなし）

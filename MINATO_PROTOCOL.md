@@ -162,14 +162,14 @@ The following message types are added on top of Bitchat's existing types.
 
 | Code    | Name              | Description                              |
 |---------|-------------------|------------------------------------------|
-| `0x10`  | `AGENT_HANDSHAKE` | Initial connection and Agent Card exchange |
-| `0x11`  | `AGENT_MESSAGE`   | General conversation and information sharing |
-| `0x12`  | `AGENT_REQUEST`   | Action request (e.g., add a calendar event) |
-| `0x13`  | `AGENT_RESPONSE`  | Response or proposal to a request        |
-| `0x14`  | `AGENT_ACK`       | Confirmation (confirm) or rejection (reject) |
-| `0x15`  | `AGENT_REVOKE`    | Permission revocation or disconnection   |
-| `0x16`  | `AGENT_PING`      | Liveness check and latency measurement   |
-| `0x17`  | `AGENT_LOG`       | Post-hoc notification (activity log in Full Auto mode) |
+| `0x30`  | `AGENT_HANDSHAKE` | Initial connection and Agent Card exchange |
+| `0x31`  | `AGENT_MESSAGE`   | General conversation and information sharing |
+| `0x32`  | `AGENT_REQUEST`   | Action request (e.g., add a calendar event) |
+| `0x33`  | `AGENT_RESPONSE`  | Response or proposal to a request        |
+| `0x34`  | `AGENT_ACK`       | Confirmation (confirm) or rejection (reject) |
+| `0x35`  | `AGENT_REVOKE`    | Permission revocation or disconnection   |
+| `0x36`  | `AGENT_PING`      | Liveness check and latency measurement   |
+| `0x37`  | `AGENT_LOG`       | Post-hoc notification (activity log in Full Auto mode) |
 
 ---
 
@@ -180,16 +180,16 @@ The following message types are added on top of Bitchat's existing types.
 ```
 Device A (Phoenix)                   Device B (Friend)
         │                                  │
-        │ ── 0x10 AGENT_HANDSHAKE ────────>│
+        │ ── 0x30 AGENT_HANDSHAKE ────────>│
         │    { Agent Card A }              │
         │                                  │
-        │ <── 0x10 AGENT_HANDSHAKE ────────│
+        │ <── 0x30 AGENT_HANDSHAKE ────────│
         │     { Agent Card B }             │
         │                                  │
         │  Both sides save Agent Cards     │
         │  Trust mode set to default       │
         │                                  │
-        │ ── 0x11 AGENT_MESSAGE ──────────>│
+        │ ── 0x31 AGENT_MESSAGE ──────────>│
         │    { intent: "message.chat" }    │
         │    "Hello!"                      │
 ```
@@ -495,7 +495,7 @@ Reused (do not modify)
   ✅ Keypair management (Keychain / Keystore)
 
 Newly added
-  🆕 0x10–0x17 MINATO message types
+  🆕 0x30–0x37 MINATO message types
   🆕 AgentCore (AI engine integration)
   🆕 Agent Card generation and exchange
   🆕 Trust Mode management
@@ -515,7 +515,7 @@ Newly added
 - [ ] Understand and organize the codebase
 
 ### Phase 1 — BLE Agent Communication (2–3 weeks)
-- [ ] Implement MINATO message types (0x10–0x15)
+- [ ] Implement MINATO message types (0x30–0x35)
 - [ ] Agent Card generation and exchange
 - [ ] Handshake sequence
 - [ ] Dummy agent with fixed responses (no API)
