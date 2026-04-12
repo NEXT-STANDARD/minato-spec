@@ -338,8 +338,9 @@ Intents are included in AGENT_MESSAGE / AGENT_REQUEST payloads to convey the pur
   "from": "npub1aaa...",
   "to": "npub1bbb...",
   "timestamp": 1712800000,
-  "request_id": "req_unique_id",
+  "nonce": "random_nonce_for_replay_protection",
   "payload": {
+    "request_id": "req_unique_id",
     "intent": "schedule.confirm",
     "action": "schedule.write",
     "content": "木曜19時で予定を入れてもいいですか？",
@@ -365,8 +366,9 @@ Intents are included in AGENT_MESSAGE / AGENT_REQUEST payloads to convey the pur
   "from": "npub1bbb...",
   "to": "npub1aaa...",
   "timestamp": 1712800100,
-  "request_id": "req_unique_id",
+  "nonce": "random_nonce_for_replay_protection",
   "payload": {
+    "request_id": "req_unique_id",
     "status": "confirmed",
     "content": "木曜19時、了解です！",
     "original_language": "ja",
@@ -512,18 +514,18 @@ Newly added
 ### Phase 0 — Preparation (1 week)
 - [x] Fork Bitchat iOS and get it building
 - [ ] Fork Bitchat Android and get it building
-- [ ] Understand and organize the codebase
+- [x] Understand and organize the codebase
 
 ### Phase 1 — BLE Agent Communication (2–3 weeks)
-- [ ] Implement MINATO message types (0x30–0x35)
-- [ ] Agent Card generation and exchange
-- [ ] Handshake sequence
-- [ ] Dummy agent with fixed responses (no API)
-- [ ] Verify the "connect with nearby agents" experience
+- [x] Implement MINATO message types (0x30–0x37)
+- [x] Agent Card generation and exchange
+- [x] Handshake sequence
+- [x] Dummy agent with fixed responses (no API)
+- [x] Verify the "connect with nearby agents" experience
 
 ### Phase 2 — Nostr Fallback (2 weeks)
-- [ ] Send/receive MINATO messages via Nostr
-- [ ] BLE / Nostr automatic switching
+- [x] Send/receive MINATO messages via Nostr
+- [x] BLE / Nostr automatic switching
 - [ ] Trust Mode UI implementation
 
 ### Phase 3 — AI Integration (2 weeks)

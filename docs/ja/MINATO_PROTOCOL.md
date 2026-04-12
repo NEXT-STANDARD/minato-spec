@@ -338,8 +338,9 @@ AGENT_MESSAGE / AGENT_REQUESTのpayloadに含まれる意図の一覧です。
   "from": "npub1aaa...",
   "to": "npub1bbb...",
   "timestamp": 1712800000,
-  "request_id": "req_unique_id",
+  "nonce": "random_nonce_for_replay_protection",
   "payload": {
+    "request_id": "req_unique_id",
     "intent": "schedule.confirm",
     "action": "schedule.write",
     "content": "木曜19時で予定を入れてもいいですか？",
@@ -365,8 +366,9 @@ AGENT_MESSAGE / AGENT_REQUESTのpayloadに含まれる意図の一覧です。
   "from": "npub1bbb...",
   "to": "npub1aaa...",
   "timestamp": 1712800100,
-  "request_id": "req_unique_id",
+  "nonce": "random_nonce_for_replay_protection",
   "payload": {
+    "request_id": "req_unique_id",
     "status": "confirmed",
     "content": "木曜19時、了解です！",
     "original_language": "ja",
@@ -510,20 +512,20 @@ minato-android/
 ## 14. ロードマップ
 
 ### Phase 0 — 準備（1週間）
-- [ ] Bitchat iOS forkしてビルドを通す
+- [x] Bitchat iOS forkしてビルドを通す
 - [ ] Bitchat Android forkしてビルドを通す
-- [ ] コードベースの理解・整理
+- [x] コードベースの理解・整理
 
 ### Phase 1 — BLEエージェント通信（2〜3週間）
-- [ ] MINATOメッセージタイプの実装（0x30〜0x35）
-- [ ] Agent Card生成・交換
-- [ ] ハンドシェイクシーケンス
-- [ ] 固定応答のダミーエージェント（APIなし）
-- [ ] 「近くにいる人のエージェントと繋がる」体験確認
+- [x] MINATOメッセージタイプの実装（0x30〜0x37）
+- [x] Agent Card生成・交換
+- [x] ハンドシェイクシーケンス
+- [x] 固定応答のダミーエージェント（APIなし）
+- [x] 「近くにいる人のエージェントと繋がる」体験確認
 
 ### Phase 2 — Nostrフォールバック（2週間）
-- [ ] Nostr経由のMINATOメッセージ送受信
-- [ ] BLE / Nostr自動切替
+- [x] Nostr経由のMINATOメッセージ送受信
+- [x] BLE / Nostr自動切替
 - [ ] Trust Mode UIの実装
 
 ### Phase 3 — AI連携（2週間）
