@@ -13,32 +13,60 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## ビルド / テスト
 
-このリポジトリにはビルド・テスト・リントのコマンドはありません（Markdown と JSON のみ）。
-将来 `schema/` ディレクトリが作成された場合、JSON Schema の妥当性検証は `ajv` 等で
-各 `examples/*.json` に対して行うことを想定しています（未整備）。
+このリポジトリにはビルド・リントのコマンドはありません（Markdown と JSON のみ）。
+JSON Schema とサンプルの妥当性は `ajv` で検証できます:
+
+```bash
+# ajv 8 + ajv-formats（date-time format を使うので必須）
+npm i -g ajv-cli ajv-formats
+
+# 例: handshake の Agent Card を検証
+npx ajv-cli validate -c ajv-formats \
+  -s schema/agent-card.json -r schema/common.json \
+  -d "examples/handshake/*-card.json"
+```
+
+`schema/common.json` が共通定義（npub, trust_mode, capability, intent,
+proposed_event など）を持ち、他のスキーマは `"$ref": "common.json#/..."`
+で参照しているので、検証時には必ず `-r schema/common.json` を付けてください。
 
 ## 現在のディレクトリ状態
 
 ```
 minato-spec/
-├── CLAUDE.md           ← このファイル
-├── LICENSE             ← MIT
-├── MINATO_PROTOCOL.md  ← 仕様本体（v0.1 Draft）
-└── README.md           ← プロジェクト紹介
+├── CLAUDE.md               ← このファイル
+├── LICENSE                 ← MIT
+├── MINATO_PROTOCOL.md      ← 仕様本体（v0.1 Draft）
+├── README.md               ← プロジェクト紹介
+├── docs/
+│   ├── ja/                 ← 日本語の人間向け解説
+│   └── en/                 ← 英語の人間向け解説
+├── schema/
+│   ├── common.json         ← 共有定義（npub, trust_mode, capability, intent 他）
+│   ├── agent-card.json     ← Agent Card (§4)
+│   ├── agent-message.json  ← AGENT_MESSAGE (0x31)
+│   ├── agent-request.json  ← AGENT_REQUEST (0x32)
+│   ├── agent-response.json ← AGENT_RESPONSE (0x33)
+│   └── agent-ack.json      ← AGENT_ACK (0x34)
+└── examples/
+    ├── handshake/          ← Agent Card ペア交換
+    ├── schedule-negotiate/ ← REQUEST → RESPONSE → ACK (同一 request_id)
+    └── multilingual/       ← content / translated_content の対
 ```
 
-以下は `MINATO_PROTOCOL.md` の §13「実装ガイドライン」および README の Roadmap で予定されているが **未作成** のディレクトリです:
+以下は README の Roadmap で予定されているが **未作成** です:
 
 ```
-docs/ja/, docs/en/              ← 仕様の人間向け解説
-schema/agent-card.json          ← Agent Card の JSON Schema
-schema/agent-message.json       ← AGENT_MESSAGE の JSON Schema
-schema/agent-request.json       ← AGENT_REQUEST の JSON Schema
-examples/                       ← handshake / schedule-negotiate / multilingual
+schema/agent-handshake.json     ← 0x30 AGENT_HANDSHAKE（実質は agent-card なので優先度低）
+schema/agent-revoke.json        ← 0x35
+schema/agent-ping.json          ← 0x36
+schema/agent-log.json           ← 0x37
 .github/ISSUE_TEMPLATE/         ← spec-proposal.md
+scripts/validate.mjs            ← 全スキーマ×全サンプルをまとめて検証する Node スクリプト
 ```
 
 新規ファイルを作る際は、`MINATO_PROTOCOL.md` の該当章と整合していることを必ず確認してください。
+Agent Card / 各メッセージの `agent_id` や `signature` のパターンは `schema/common.json` に集約されています。
 
 ## アーキテクチャ（big picture）
 
