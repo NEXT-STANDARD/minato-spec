@@ -206,6 +206,67 @@ Agent A                    Nostr Relay              Agent B
      │     { MINATO payload }      │                     │
 ```
 
+### Transport Selection and Fallback
+
+All MINATO message types (0x30–0x37) are transport-independent. The same JSON payload flows over both BLE and Nostr.
+
+```
+Send decision:
+  1. Check BLE reachability (isPeerConnected || isPeerReachable)
+  2. If BLE reachable → send via BLE Mesh
+  3. Else → send via Nostr Relay (NIP-17 gift-wrapped DM)
+
+Receive:
+  - BLE packets → BLEService handles directly
+  - Nostr gift-wraps → decrypt NIP-17 → detect MINATO type (0x30–0x37) → dispatch
+```
+
+The `request_id` field ensures REQUEST→RESPONSE→ACK correlation across transport boundaries. A negotiation may start over BLE and complete over Nostr if the peer moves out of range.
+
+### Schedule Negotiation Sequence
+
+Multi-round negotiation for scheduling events (e.g., drinks, meetings):
+
+```
+Alice                                        Bob
+  │                                            │
+  │ ── 0x32 AGENT_REQUEST ───────────────────>│
+  │    intent: "schedule.negotiate"            │
+  │    action: "schedule.write"                │
+  │    proposed_event: { Drinks, Thu 19:00 }   │
+  │    request_id: "req_001"                   │
+  │                                            │
+  │         ┌─────────────────────────────┐    │
+  │         │ Bob reviews proposal        │    │
+  │         │ (Trust Mode gates approval) │    │
+  │         └─────────────────────────────┘    │
+  │                                            │
+  ├── Option A: Accept ────────────────────────┤
+  │ <── 0x34 AGENT_ACK ───────────────────────│
+  │     request_id: "req_001"                  │
+  │     status: "confirmed"                    │
+  │                                            │
+  ├── Option B: Counter-proposal ──────────────┤
+  │ <── 0x33 AGENT_RESPONSE ──────────────────│
+  │     request_id: "req_001"                  │
+  │     proposed_event: { Drinks, Fri 20:00 }  │
+  │                                            │
+  │  Alice reviews counter-proposal            │
+  │ ── 0x34 AGENT_ACK ───────────────────────>│
+  │    request_id: "req_001"                   │
+  │    status: "confirmed"                     │
+  │                                            │
+  ├── Option C: Decline ───────────────────────┤
+  │ <── 0x34 AGENT_ACK ───────────────────────│
+  │     request_id: "req_001"                  │
+  │     status: "rejected"                     │
+```
+
+**Trust Mode interaction with schedule requests:**
+- `plan` / `suggest`: Always require owner approval before responding
+- `auto`: `schedule.write` and `schedule.delete` are high-risk — require approval even in auto mode
+- `full_auto`: AI agent auto-responds, owner receives post-hoc AGENT_LOG
+
 ---
 
 ## 7. Trust Mode
@@ -357,6 +418,35 @@ Intents are included in AGENT_MESSAGE / AGENT_REQUEST payloads to convey the pur
 }
 ```
 
+### AGENT_RESPONSE
+
+Used for counter-proposals in schedule negotiation, or any response to an AGENT_REQUEST that isn't a simple confirm/reject.
+
+```json
+{
+  "type": "AGENT_RESPONSE",
+  "version": "0.1",
+  "from": "npub1bbb...",
+  "to": "npub1aaa...",
+  "timestamp": 1712800050,
+  "nonce": "random_nonce_for_replay_protection",
+  "payload": {
+    "request_id": "req_unique_id",
+    "intent": "schedule.negotiate",
+    "content": "木曜は難しいので金曜はどうですか？",
+    "original_language": "ja",
+    "translated_content": "Thursday is difficult — how about Friday?",
+    "proposed_event": {
+      "title": "Drinks",
+      "start": "2026-04-18T20:00:00+09:00",
+      "end": "2026-04-18T22:00:00+09:00",
+      "location": "Shibuya"
+    }
+  },
+  "signature": "ed25519_signature"
+}
+```
+
 ### AGENT_ACK
 
 ```json
@@ -431,6 +521,20 @@ Displays translated_content matching receiver's language (owner_locale)
 - `nonce` for replay attack prevention
 - `request_id` for deduplication
 
+### Persistence
+
+Agent Cards and Trust Settings MUST be persisted across app restarts.
+
+| Data | Storage | Rationale |
+|------|---------|-----------|
+| Local Agent Card | iOS Keychain / Android Keystore | Survives reinstall, encrypted at rest |
+| Remote Agent Cards | iOS Keychain / Android Keystore | Avoids re-handshake on every launch |
+| Trust Settings (per npub) | iOS Keychain / Android Keystore | User's autonomy preferences are critical |
+| Handshake state | In-memory only | Re-handshake on restart is acceptable |
+| Pending replies | In-memory only | Transient approval queue, discard on restart |
+
+On startup, the Agent Store loads persisted data. If the local Agent Card's `agent_id` no longer matches the device's current Nostr identity (e.g., after key rotation), a new card is created.
+
 ### Privacy Design
 
 ```
@@ -449,22 +553,25 @@ Location: Not shared                     ← default
 
 ## 13. Implementation Guidelines
 
-### iOS Implementation (Phase 1)
+### iOS Implementation
 
 ```
 minato-ios/
-  ├── Bitchat/          ← Forked and reused as-is
-  └── MINATO/           ← Newly added
-      ├── AgentCore.swift
-      ├── AgentCard.swift
-      ├── PermissionManager.swift
-      ├── TrustModeManager.swift
-      ├── CalendarAdapter.swift
+  ├── bitchat/              ← Forked and reused as-is
+  └── bitchat/MINATO/       ← Newly added
+      ├── Models/
+      │   ├── AgentCard.swift
+      │   ├── Capability.swift
+      │   ├── TrustMode.swift          (TrustMode enum + TrustSettings)
+      │   └── Intent.swift
+      ├── Services/
+      │   ├── MINATOAgentStore.swift    (singleton: cards, trust, negotiations, persistence)
+      │   └── BLEService+MINATO.swift   (packet routing + handlers + send methods)
       ├── AIEngine/
-      │   └── ClaudeEngine.swift
+      │   ├── AIEngine.swift            (protocol: generateResponse, translate, extractSchedule)
+      │   └── GeminiEngine.swift        (Gemini 2.5 Flash implementation)
       └── Protocol/
-          ├── MINATOMessage.swift
-          └── MINATOMessageType.swift
+          └── MINATOMessageType.swift   (0x30–0x37 enum + MINATOPayload + PayloadContent)
 ```
 
 ### Android Implementation (Phase 2)
@@ -529,12 +636,17 @@ Newly added
 - [x] Trust Mode UI implementation
 
 ### Phase 3 — AI Integration (2 weeks)
-- [ ] Claude API connection (AgentCore)
-- [ ] CalendarAdapter (read availability)
-- [ ] Schedule negotiation flow (negotiate → confirm)
+- [x] AI engine integration (Gemini 2.5 Flash via AIEngine protocol)
+- [x] AI-powered auto-reply with Trust Mode approval flow
+- [x] Multilingual translation (protocol-level, AI engine handles)
+- [x] Agent Card persistence (Keychain-backed)
+- [x] Schedule negotiation flow (REQUEST → RESPONSE → ACK)
+- [x] Schedule proposal UI (approval banner, counter-proposal sheet)
+- [x] Nostr fallback for all MINATO message types (0x30–0x37)
+- [ ] CalendarAdapter (EventKit read availability) — Phase 3.5
+- [ ] AI schedule extraction from natural language — implemented, needs tuning
 
-### Phase 4 — Multilingual & Polish (2 weeks)
-- [ ] Multilingual translation layer
+### Phase 4 — Polish & Platform (2 weeks)
 - [ ] Agent Card QR code
 - [ ] Activity log (for Full Auto mode)
 - [ ] Android implementation catch-up
