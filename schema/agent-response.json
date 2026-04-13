@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/NEXT-STANDARD/minato-spec/blob/main/schema/agent-response.json",
+  "title": "AgentResponse",
+  "description": "MINATO 0x33 AGENT_RESPONSE. Counter-proposal or non-trivial response to an AGENT_REQUEST. Simple accept/reject should use AGENT_ACK. See MINATO_PROTOCOL.md §5, §6, §10.",
+  "type": "object",
+  "required": ["type", "version", "from", "to", "timestamp", "nonce", "payload", "signature"],
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "AGENT_RESPONSE"
+    },
+    "version": { "$ref": "common.json#/definitions/minato_version" },
+    "from": { "$ref": "common.json#/definitions/npub" },
+    "to": { "$ref": "common.json#/definitions/npub" },
+    "timestamp": { "$ref": "common.json#/definitions/unix_timestamp" },
+    "nonce": { "$ref": "common.json#/definitions/nonce" },
+    "payload": {
+      "type": "object",
+      "description": "AGENT_RESPONSE payload. See §10.",
+      "required": ["request_id", "intent", "content", "original_language"],
+      "properties": {
+        "request_id": { "$ref": "common.json#/definitions/request_id" },
+        "intent": { "$ref": "common.json#/definitions/intent" },
+        "content": {
+          "description": "Human-facing message body in the sender's original language.",
+          "type": "string"
+        },
+        "original_language": { "$ref": "common.json#/definitions/bcp47_locale" },
+        "translated_content": {
+          "description": "Message translated into the receiver's owner_locale. Optional.",
+          "type": "string"
+        },
+        "proposed_event": { "$ref": "common.json#/definitions/proposed_event" },
+        "context": {
+          "description": "Free-form structured context.",
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "signature": { "$ref": "common.json#/definitions/signature" }
+  }
+}

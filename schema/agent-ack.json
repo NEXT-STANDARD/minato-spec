@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/NEXT-STANDARD/minato-spec/blob/main/schema/agent-ack.json",
+  "title": "AgentAck",
+  "description": "MINATO 0x34 AGENT_ACK. Confirms (status=confirmed) or rejects (status=rejected) a prior AGENT_REQUEST / AGENT_RESPONSE. See MINATO_PROTOCOL.md §5, §6, §10.",
+  "type": "object",
+  "required": ["type", "version", "from", "to", "timestamp", "nonce", "payload", "signature"],
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "AGENT_ACK"
+    },
+    "version": { "$ref": "common.json#/definitions/minato_version" },
+    "from": { "$ref": "common.json#/definitions/npub" },
+    "to": { "$ref": "common.json#/definitions/npub" },
+    "timestamp": { "$ref": "common.json#/definitions/unix_timestamp" },
+    "nonce": { "$ref": "common.json#/definitions/nonce" },
+    "payload": {
+      "type": "object",
+      "description": "AGENT_ACK payload. See §10.",
+      "required": ["request_id", "status"],
+      "properties": {
+        "request_id": { "$ref": "common.json#/definitions/request_id" },
+        "status": { "$ref": "common.json#/definitions/ack_status" },
+        "content": {
+          "description": "Optional human-facing note (e.g., 'Thursday at 7 PM, confirmed!').",
+          "type": "string"
+        },
+        "original_language": { "$ref": "common.json#/definitions/bcp47_locale" },
+        "translated_content": {
+          "description": "Note translated into the receiver's owner_locale.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "signature": { "$ref": "common.json#/definitions/signature" }
+  }
+}

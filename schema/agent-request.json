@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/NEXT-STANDARD/minato-spec/blob/main/schema/agent-request.json",
+  "title": "AgentRequest",
+  "description": "MINATO 0x32 AGENT_REQUEST. Requests an action (e.g., adding a calendar event). Correlated with AGENT_RESPONSE / AGENT_ACK via request_id. See MINATO_PROTOCOL.md §5, §6, §10.",
+  "type": "object",
+  "required": ["type", "version", "from", "to", "timestamp", "nonce", "payload", "signature"],
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "AGENT_REQUEST"
+    },
+    "version": { "$ref": "common.json#/definitions/minato_version" },
+    "from": { "$ref": "common.json#/definitions/npub" },
+    "to": { "$ref": "common.json#/definitions/npub" },
+    "timestamp": { "$ref": "common.json#/definitions/unix_timestamp" },
+    "nonce": { "$ref": "common.json#/definitions/nonce" },
+    "payload": {
+      "type": "object",
+      "description": "AGENT_REQUEST payload. See §10.",
+      "required": ["request_id", "intent", "action", "content", "original_language"],
+      "properties": {
+        "request_id": { "$ref": "common.json#/definitions/request_id" },
+        "intent": { "$ref": "common.json#/definitions/intent" },
+        "action": {
+          "description": "Capability the sender is requesting the recipient to exercise.",
+          "$ref": "common.json#/definitions/capability"
+        },
+        "content": {
+          "description": "Human-facing message body in the sender's original language.",
+          "type": "string"
+        },
+        "original_language": { "$ref": "common.json#/definitions/bcp47_locale" },
+        "translated_content": {
+          "description": "Message translated into the receiver's owner_locale. Optional.",
+          "type": "string"
+        },
+        "proposed_event": { "$ref": "common.json#/definitions/proposed_event" },
+        "context": {
+          "description": "Free-form structured context (e.g., alternative time slots).",
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "signature": { "$ref": "common.json#/definitions/signature" }
+  }
+}

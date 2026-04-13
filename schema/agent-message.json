@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/NEXT-STANDARD/minato-spec/blob/main/schema/agent-message.json",
+  "title": "AgentMessage",
+  "description": "MINATO 0x31 AGENT_MESSAGE. General-purpose conversational or informational message. See MINATO_PROTOCOL.md §5, §10.",
+  "type": "object",
+  "required": ["type", "version", "from", "to", "timestamp", "nonce", "payload", "signature"],
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "type": "string",
+      "const": "AGENT_MESSAGE"
+    },
+    "version": { "$ref": "common.json#/definitions/minato_version" },
+    "from": { "$ref": "common.json#/definitions/npub" },
+    "to": { "$ref": "common.json#/definitions/npub" },
+    "timestamp": { "$ref": "common.json#/definitions/unix_timestamp" },
+    "nonce": { "$ref": "common.json#/definitions/nonce" },
+    "payload": {
+      "type": "object",
+      "description": "AGENT_MESSAGE payload. See §10 and §11.",
+      "required": ["intent", "content", "original_language"],
+      "properties": {
+        "intent": { "$ref": "common.json#/definitions/intent" },
+        "content": {
+          "description": "Message body in the sender's original language.",
+          "type": "string"
+        },
+        "original_language": { "$ref": "common.json#/definitions/bcp47_locale" },
+        "translated_content": {
+          "description": "Message translated into the receiver's owner_locale. Optional; recommended when senders and receivers speak different languages.",
+          "type": "string"
+        },
+        "context": {
+          "description": "Free-form structured context associated with the message (e.g., available time slots for schedule.negotiate).",
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "signature": { "$ref": "common.json#/definitions/signature" }
+  }
+}

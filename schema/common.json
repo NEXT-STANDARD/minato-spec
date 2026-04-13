@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/NEXT-STANDARD/minato-spec/blob/main/schema/common.json",
+  "title": "MINATO Common Definitions",
+  "description": "Shared definitions referenced by other MINATO JSON Schemas. Based on MINATO Agent Protocol v0.1 sections 4, 7, 8, 9.",
+  "type": "object",
+  "definitions": {
+    "minato_version": {
+      "description": "Protocol version. Currently '0.1'.",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
+    "npub": {
+      "description": "Nostr public key in bech32 (npub1...) format. 58 bech32 chars after the 'npub1' HRP.",
+      "type": "string",
+      "pattern": "^npub1[023456789acdefghjklmnpqrstuvwxyz]{58}$"
+    },
+    "unix_timestamp": {
+      "description": "Seconds since the Unix epoch.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "bcp47_locale": {
+      "description": "BCP 47 language tag (e.g., 'ja', 'en', 'zh-TW'). See MINATO_PROTOCOL.md §11.",
+      "type": "string",
+      "pattern": "^[a-zA-Z]{2,3}(-[A-Za-z0-9]{2,8})*$"
+    },
+    "nonce": {
+      "description": "Random value for replay-attack prevention.",
+      "type": "string",
+      "minLength": 1
+    },
+    "signature": {
+      "description": "Ed25519 signature (64 bytes) over the canonical message, hex-encoded (128 hex chars). Matches the encoding used by schema/agent-card.json.",
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{128}$"
+    },
+    "request_id": {
+      "description": "Unique id correlating AGENT_REQUEST → AGENT_RESPONSE → AGENT_ACK across transport boundaries. See §6.",
+      "type": "string",
+      "minLength": 1
+    },
+    "trust_mode": {
+      "description": "Trust Mode technical name. See MINATO_PROTOCOL.md §7.",
+      "type": "string",
+      "enum": ["plan", "suggest", "auto", "full_auto"]
+    },
+    "capability": {
+      "description": "Capability identifier. See MINATO_PROTOCOL.md §8.",
+      "type": "string",
+      "enum": [
+        "schedule.read",
+        "schedule.write",
+        "schedule.delete",
+        "message.reply",
+        "message.initiate",
+        "info.exchange",
+        "language.translate",
+        "location.area",
+        "location.precise"
+      ]
+    },
+    "intent": {
+      "description": "Intent identifier carried in payloads. See MINATO_PROTOCOL.md §9.",
+      "type": "string",
+      "enum": [
+        "message.chat",
+        "schedule.negotiate",
+        "schedule.confirm",
+        "schedule.cancel",
+        "info.exchange",
+        "trust.upgrade",
+        "trust.downgrade",
+        "connection.establish",
+        "connection.terminate"
+      ]
+    },
+    "ack_status": {
+      "description": "Result reported in AGENT_ACK.",
+      "type": "string",
+      "enum": ["confirmed", "rejected"]
+    },
+    "proposed_event": {
+      "description": "Calendar event proposal carried in AGENT_REQUEST / AGENT_RESPONSE payloads.",
+      "type": "object",
+      "required": ["title", "start", "end"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "start": {
+          "description": "ISO 8601 date-time with offset (e.g., '2026-04-17T19:00:00+09:00').",
+          "type": "string",
+          "format": "date-time"
+        },
+        "end": {
+          "description": "ISO 8601 date-time with offset.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "location": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "envelope_base": {
+      "description": "Shared top-level envelope fields used by AGENT_MESSAGE / AGENT_REQUEST / AGENT_RESPONSE / AGENT_ACK.",
+      "type": "object",
+      "required": ["type", "version", "from", "to", "timestamp", "nonce", "payload", "signature"],
+      "properties": {
+        "type": { "type": "string" },
+        "version": { "$ref": "#/definitions/minato_version" },
+        "from": { "$ref": "#/definitions/npub" },
+        "to": { "$ref": "#/definitions/npub" },
+        "timestamp": { "$ref": "#/definitions/unix_timestamp" },
+        "nonce": { "$ref": "#/definitions/nonce" },
+        "payload": { "type": "object" },
+        "signature": { "$ref": "#/definitions/signature" }
+      }
+    }
+  }
+}
