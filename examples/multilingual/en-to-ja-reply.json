@@ -1,0 +1,15 @@
+{
+  "type": "AGENT_MESSAGE",
+  "version": "0.1",
+  "from": "npub12qrswl7u4t7qkm2rf8p5r6sfydexy6ea2qrswl7u4t7qkm2rf8p5r6sfyd",
+  "to": "npub1ds7azg0huz4lh84a7r49vhehmhkvsfgjds7azg0huz4lh84a7r49vhehmh",
+  "timestamp": 1712800500,
+  "nonce": "msg-nonce-f6e5d4c3b2",
+  "payload": {
+    "intent": "message.chat",
+    "content": "Yes! Friday evening in Tokyo sounds great. Shall we do drinks in Shibuya?",
+    "original_language": "en",
+    "translated_content": "はい！ 金曜夜の東京、ぜひ。Shibuyaで飲みませんか？"
+  },
+  "signature": "c87227893b779f1c571a988e252d0e238bb4a84b94ba9498f2094cfa3e86878aa27e7237bdc67976f706299d0d293ae7c26ff5942448ed171f5a9d93e3efb3eb"
+}

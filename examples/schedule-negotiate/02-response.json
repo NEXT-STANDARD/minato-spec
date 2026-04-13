@@ -1,0 +1,22 @@
+{
+  "type": "AGENT_RESPONSE",
+  "version": "0.1",
+  "from": "npub12qrswl7u4t7qkm2rf8p5r6sfydexy6ea2qrswl7u4t7qkm2rf8p5r6sfyd",
+  "to": "npub1ds7azg0huz4lh84a7r49vhehmhkvsfgjds7azg0huz4lh84a7r49vhehmh",
+  "timestamp": 1712800200,
+  "nonce": "res-nonce-9a1c3d4e77",
+  "payload": {
+    "request_id": "req_20260417_001",
+    "intent": "schedule.negotiate",
+    "content": "Thursday is tough — how about Friday at 8 PM in Shibuya?",
+    "original_language": "en",
+    "translated_content": "木曜は難しいので、金曜の20時、Shibuyaではどうですか？",
+    "proposed_event": {
+      "title": "Drinks",
+      "start": "2026-04-18T20:00:00+09:00",
+      "end": "2026-04-18T22:00:00+09:00",
+      "location": "Shibuya"
+    }
+  },
+  "signature": "ada73102459e1a4dd820d23c4ff22e492f82a651a843f130056b95ada85b9c3557dc1bb3e2b4cc4b81b6d9d502c52b198844ec787a3cdb231e65d53363a1f47c"
+}

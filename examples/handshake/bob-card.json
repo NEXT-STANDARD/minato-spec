@@ -1,0 +1,25 @@
+{
+  "minato_version": "0.1",
+  "agent_id": "npub12qrswl7u4t7qkm2rf8p5r6sfydexy6ea2qrswl7u4t7qkm2rf8p5r6sfyd",
+  "display_name": "Bob's Agent",
+  "owner_locale": "en",
+  "capabilities": [
+    "schedule.read",
+    "schedule.write",
+    "message.reply",
+    "message.initiate",
+    "info.exchange",
+    "language.translate"
+  ],
+  "default_trust_mode": "plan",
+  "supported_intents": [
+    "message.chat",
+    "schedule.negotiate",
+    "schedule.confirm",
+    "schedule.cancel",
+    "info.exchange"
+  ],
+  "ai_engine": "claude",
+  "created_at": 1712800005,
+  "signature": "cd90795146612ddccf09ff598e4e565b13dfa28627e32e32d0dce0ca09046c894463266455f688f068823527b3ade645c84bd744f3f9f275e6733244f21fa2e3"
+}

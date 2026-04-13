@@ -1,0 +1,16 @@
+{
+  "type": "AGENT_ACK",
+  "version": "0.1",
+  "from": "npub1ds7azg0huz4lh84a7r49vhehmhkvsfgjds7azg0huz4lh84a7r49vhehmh",
+  "to": "npub12qrswl7u4t7qkm2rf8p5r6sfydexy6ea2qrswl7u4t7qkm2rf8p5r6sfyd",
+  "timestamp": 1712800300,
+  "nonce": "ack-nonce-2e0b5f9c61",
+  "payload": {
+    "request_id": "req_20260417_001",
+    "status": "confirmed",
+    "content": "金曜20時、Shibuyaで了解です！",
+    "original_language": "ja",
+    "translated_content": "Friday 8 PM in Shibuya — confirmed!"
+  },
+  "signature": "21e8f27d36292695c5c668cb572d2b2d753613a6bd4b6b8038d88e63d6327c89a675cbf753a43f62ae6bf765676c97f0e51baf2eb0c59ad5bf74166313070d65"
+}

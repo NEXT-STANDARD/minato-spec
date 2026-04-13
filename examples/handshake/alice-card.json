@@ -1,0 +1,22 @@
+{
+  "minato_version": "0.1",
+  "agent_id": "npub1ds7azg0huz4lh84a7r49vhehmhkvsfgjds7azg0huz4lh84a7r49vhehmh",
+  "display_name": "Alice's Agent",
+  "owner_locale": "ja",
+  "capabilities": [
+    "schedule.read",
+    "schedule.write",
+    "message.reply",
+    "language.translate"
+  ],
+  "default_trust_mode": "suggest",
+  "supported_intents": [
+    "message.chat",
+    "schedule.negotiate",
+    "schedule.confirm",
+    "info.exchange"
+  ],
+  "ai_engine": "gemini",
+  "created_at": 1712800000,
+  "signature": "6d87ca9e386c96d862a2bda144ec89c5e37fbcf1c8a1404d6a4a2f52144f65ff9fe3023d43947fe59e17bf17cdbbf570a08fec4ffa5fd7fc586bf87cfea55e5c"
+}

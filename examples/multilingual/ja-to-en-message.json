@@ -1,0 +1,21 @@
+{
+  "type": "AGENT_MESSAGE",
+  "version": "0.1",
+  "from": "npub1ds7azg0huz4lh84a7r49vhehmhkvsfgjds7azg0huz4lh84a7r49vhehmh",
+  "to": "npub12qrswl7u4t7qkm2rf8p5r6sfydexy6ea2qrswl7u4t7qkm2rf8p5r6sfyd",
+  "timestamp": 1712800400,
+  "nonce": "msg-nonce-a1b2c3d4e5",
+  "payload": {
+    "intent": "message.chat",
+    "content": "お久しぶりです。来週、東京に来ませんか？金曜夜なら空いてます。",
+    "original_language": "ja",
+    "translated_content": "It's been a while! Are you coming to Tokyo next week? I'm free on Friday evening.",
+    "context": {
+      "available_slots": [
+        "2026-04-17T19:00:00+09:00",
+        "2026-04-18T19:00:00+09:00"
+      ]
+    }
+  },
+  "signature": "2d45b0894b0dc7fa47ac13e065db763cf82c4324d9266510857acfd5d380e1d7e38072304ffc39bf97b2606a18f72d6966c67ab490a31c64584fbf0f827fbde1"
+}
