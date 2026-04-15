@@ -135,6 +135,7 @@ It is exchanged during the handshake and declares the agent's capabilities and t
   ],
   "ai_engine": "claude",
   "created_at": 1712800000,
+  "ed25519_pub_key": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2",
   "signature": "ed25519_signature_here"
 }
 ```
@@ -144,7 +145,7 @@ It is exchanged during the handshake and declares the agent's capabilities and t
 | Field                | Type     | Description                                    |
 |----------------------|----------|------------------------------------------------|
 | `minato_version`     | string   | Protocol version                               |
-| `agent_id`           | string   | Nostr public key (npub format)                 |
+| `agent_id`           | string   | Nostr public key (npub format, secp256k1)      |
 | `display_name`       | string   | User-configured agent name                     |
 | `owner_locale`       | string   | Owner's primary language (BCP 47)              |
 | `capabilities`       | string[] | List of permitted operations                   |
@@ -152,7 +153,26 @@ It is exchanged during the handshake and declares the agent's capabilities and t
 | `supported_intents`  | string[] | List of supported intents                      |
 | `ai_engine`          | string   | AI engine in use (informational)               |
 | `created_at`         | int      | Unix timestamp                                 |
-| `signature`          | string   | Ed25519 signature (anti-spoofing)              |
+| `ed25519_pub_key`    | string   | Ed25519 public key (32 bytes, hex, 64 chars) used to verify `signature` |
+| `signature`          | string   | Ed25519 signature over this card (anti-spoofing) |
+
+> **Note on key separation**: `agent_id` is a Nostr/secp256k1 public key used as a stable identifier.
+> `ed25519_pub_key` is the separate Ed25519 public key (CryptoKit `Curve25519.Signing`) used for
+> cryptographic signature verification. Receivers MUST verify `signature` using `ed25519_pub_key`,
+> not `agent_id`.
+
+### Signature Canonical Form
+
+The `signature` field is an Ed25519 signature over the **canonical serialization** of the Agent Card.
+The canonical form is computed as follows:
+
+1. Take the Agent Card JSON object.
+2. Set `signature` to `null` (or omit it entirely).
+3. Serialize to JSON with **sorted keys** (lexicographic, ascending) and no extra whitespace.
+4. Sign the resulting UTF-8 bytes with the Ed25519 private key corresponding to `ed25519_pub_key`.
+5. Encode the 64-byte signature as lowercase hex (128 characters).
+
+Implementations MUST reject Agent Cards whose `signature` does not verify.
 
 ---
 

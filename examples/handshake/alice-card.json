@@ -18,5 +18,6 @@
   ],
   "ai_engine": "gemini",
   "created_at": 1712800000,
-  "signature": "6d87ca9e386c96d862a2bda144ec89c5e37fbcf1c8a1404d6a4a2f52144f65ff9fe3023d43947fe59e17bf17cdbbf570a08fec4ffa5fd7fc586bf87cfea55e5c"
+  "ed25519_pub_key": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2",
+  "signature": "6d87ca9e386c96d862a2bda144ec89c5e37fbcf1c8a1404d6a4a2f52144f65ff9fe3023d43947fe59e17bf17cdbbf570a08fec4ffa5fd7fc586bf87cfea55e5c00"
 }

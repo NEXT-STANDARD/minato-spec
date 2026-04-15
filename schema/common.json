@@ -30,6 +30,11 @@
       "type": "string",
       "minLength": 1
     },
+    "ed25519_pub_key": {
+      "description": "Ed25519 public key (32 bytes) used for signature verification, hex-encoded (64 hex chars, lowercase). Separate from agent_id (Nostr/secp256k1). See MINATO_PROTOCOL.md §4.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
     "signature": {
       "description": "Ed25519 signature (64 bytes) over the canonical message, hex-encoded (128 hex chars). Matches the encoding used by schema/agent-card.json.",
       "type": "string",
