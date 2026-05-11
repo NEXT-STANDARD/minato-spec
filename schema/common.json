@@ -94,15 +94,6 @@
         "all"
       ]
     },
-    "agent_log_action": {
-      "description": "Autonomous action type reported by AGENT_LOG.",
-      "type": "string",
-      "enum": [
-        "auto_reply",
-        "auto_schedule_ack",
-        "auto_schedule_reject"
-      ]
-    },
     "proposed_event": {
       "description": "Calendar event proposal carried in AGENT_REQUEST / AGENT_RESPONSE payloads.",
       "type": "object",
