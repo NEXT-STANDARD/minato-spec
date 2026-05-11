@@ -85,15 +85,6 @@
       "type": "string",
       "enum": ["confirmed", "rejected"]
     },
-    "revoke_scope": {
-      "description": "Scope affected by AGENT_REVOKE. 'trust' removes local trust settings, 'agent_card' removes the remote Agent Card, and 'all' removes both.",
-      "type": "string",
-      "enum": [
-        "trust",
-        "agent_card",
-        "all"
-      ]
-    },
     "proposed_event": {
       "description": "Calendar event proposal carried in AGENT_REQUEST / AGENT_RESPONSE payloads.",
       "type": "object",
