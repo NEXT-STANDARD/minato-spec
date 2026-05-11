@@ -13,7 +13,6 @@
     "default_trust_mode",
     "supported_intents",
     "created_at",
-    "ed25519_pub_key",
     "signature"
   ],
   "additionalProperties": false,
@@ -94,10 +93,6 @@
       "type": "integer",
       "description": "Unix timestamp (seconds since epoch) of when this Agent Card was issued.",
       "minimum": 0
-    },
-    "ed25519_pub_key": {
-      "$ref": "common.json#/definitions/ed25519_pub_key",
-      "description": "Ed25519 public key (32 bytes, 64 hex chars, lowercase) corresponding to the private key used to sign this card and all outgoing message envelopes. Separate from agent_id (which is a Nostr secp256k1 public key). Receivers use this key to verify the signature field."
     },
     "signature": {
       "type": "string",
