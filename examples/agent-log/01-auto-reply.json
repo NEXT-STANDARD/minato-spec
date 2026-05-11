@@ -1,0 +1,19 @@
+{
+  "type": "AGENT_LOG",
+  "version": "0.1",
+  "from": "npub1ds7azg0huz4lh84a7r49vhehmhkvsfgjds7azg0huz4lh84a7r49vhehmh",
+  "to": "npub12qrswl7u4t7qkm2rf8p5r6sfydexy6ea2qrswl7u4t7qkm2rf8p5r6sfyd",
+  "timestamp": 1712800300,
+  "nonce": "agent-log-001",
+  "payload": {
+    "log_id": "log-20260413-0001",
+    "action": "auto_reply",
+    "intent": "message.chat",
+    "trust_mode": "full_auto",
+    "content": "メッセージを受け取り、自動返信しました。",
+    "context": {
+      "source_transport": "ble"
+    }
+  },
+  "signature": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+}

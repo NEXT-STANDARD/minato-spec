@@ -518,6 +518,45 @@ agent relationship. Receivers MUST verify the envelope signature before applying
 
 If `scope` is omitted, receivers SHOULD treat it as `all`.
 
+### AGENT_LOG
+
+Used for post-hoc notification of autonomous actions performed by an agent in `auto` or
+`full_auto` trust mode. This is an audit signal, not a request for approval. Receivers MUST
+verify the envelope signature before displaying or storing the log.
+
+```json
+{
+  "type": "AGENT_LOG",
+  "version": "0.1",
+  "from": "npub1aaa...",
+  "to": "npub1bbb...",
+  "timestamp": 1712800300,
+  "nonce": "random_nonce_for_replay_protection",
+  "payload": {
+    "log_id": "log_unique_id",
+    "action": "auto_reply",
+    "intent": "message.chat",
+    "trust_mode": "full_auto",
+    "content": "メッセージを受け取り、自動返信しました。",
+    "context": {
+      "source_message_id": "optional_message_id"
+    }
+  },
+  "signature": "ed25519_signature"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `log_id` | string | Idempotency key for deduplicating repeated log delivery |
+| `action` | string | Autonomous action type: `auto_reply`, `auto_schedule_ack`, or `auto_schedule_reject` |
+| `intent` | string | Optional intent associated with the action |
+| `trust_mode` | string | Trust mode under which the action was taken (`auto` or `full_auto`) |
+| `content` | string | Human-readable summary of the action |
+| `context` | object | Optional structured metadata |
+
+Receivers SHOULD deduplicate logs by `(from, log_id)`.
+
 ---
 
 ## 11. Multilingual Support
