@@ -488,6 +488,36 @@ Used for counter-proposals in schedule negotiation, or any response to an AGENT_
 }
 ```
 
+### AGENT_REVOKE
+
+Used to revoke previously granted trust, discard a remote Agent Card, or terminate the MINATO
+agent relationship. Receivers MUST verify the envelope signature before applying a revoke.
+
+```json
+{
+  "type": "AGENT_REVOKE",
+  "version": "0.1",
+  "from": "npub1aaa...",
+  "to": "npub1bbb...",
+  "timestamp": 1712800200,
+  "nonce": "random_nonce_for_replay_protection",
+  "payload": {
+    "intent": "connection.terminate",
+    "scope": "all",
+    "reason": "Owner revoked this agent connection"
+  },
+  "signature": "ed25519_signature"
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `intent` | string | MUST be `connection.terminate` |
+| `scope` | string | Revocation scope: `trust`, `agent_card`, or `all` |
+| `reason` | string | Optional human-readable reason shown in local logs/UI |
+
+If `scope` is omitted, receivers SHOULD treat it as `all`.
+
 ---
 
 ## 11. Multilingual Support
